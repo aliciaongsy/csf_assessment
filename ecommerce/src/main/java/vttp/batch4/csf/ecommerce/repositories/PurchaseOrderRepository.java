@@ -51,9 +51,6 @@ public class PurchaseOrderRepository {
       count += updateLineItem;
       
     }
-    if (count == items.size()){
-      throw new LineItemException("test");
-    }
     
     if (count < items.size()){
       System.out.println("error adding to table");

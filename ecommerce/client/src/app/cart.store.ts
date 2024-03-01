@@ -21,7 +21,7 @@ export class CartStore extends ComponentStore<Cart>{
         (slice: Cart, item: LineItem) => {
             console.info("adding item to store")
             for (let i = 0; i < slice.lineItems.length; i++){
-                if (slice.lineItems[i].productId == item.productId){
+                if (slice.lineItems[i].prodId == item.prodId){
                     console.info("same item, increment count")
                     slice.lineItems[i].quantity+=1
                     return {

@@ -13,7 +13,7 @@ export interface Product {
 }
 
 export interface LineItem {
-  productId: string
+  prodId: string
   quantity: number
   name: string
   price: number
