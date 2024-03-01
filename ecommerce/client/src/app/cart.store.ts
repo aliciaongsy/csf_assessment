@@ -21,7 +21,7 @@ export class CartStore extends ComponentStore<Cart>{
         (slice: Cart, item: LineItem) => {
             console.info("adding item to store")
             for (let i = 0; i < slice.lineItems.length; i++){
-                if (slice.lineItems[i].prodId == item.prodId){
+                if (slice.lineItems[i].productId == item.productId){
                     console.info("same item, increment count")
                     slice.lineItems[i].quantity+=1
                     return {
@@ -49,5 +49,15 @@ export class CartStore extends ComponentStore<Cart>{
 
     readonly getAllItems = this.select<LineItem[]>(
         (slice: Cart) => slice.lineItems
+    )
+
+    readonly clearCart = this.updater<void>(
+        (slice: Cart) => {
+            console.info("clearing db")
+            this.setState(INIT_STATE)
+            return {
+                lineItems: slice.lineItems
+            }
+        }
     )
 }

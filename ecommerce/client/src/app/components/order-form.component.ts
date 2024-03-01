@@ -32,7 +32,7 @@ export class OrderFormComponent implements OnInit {
 
   addToCart() {
     const lineItem: LineItem = {
-      prodId: this.productId,
+      productId: this.productId,
       quantity: this.form.value['quantity'],
       name: this.productName,
       price: this.productPrice

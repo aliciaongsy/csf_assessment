@@ -1,4 +1,4 @@
 TODO Task 1
 
 Write the command to import products.csv into Mongo in this file
-mongoimport -hlocalhost --port=27017 --db=shoppingcart -c products --type=csv --fields="ProductName,Brand,Price,DiscountPrice,Image_Url,Quantity,Category,SubCategory,Absolute_Url" products.csv
+mongoimport -hlocalhost --port=27017 --db=shoppingcart -c products --type=csv --headerline products.csv

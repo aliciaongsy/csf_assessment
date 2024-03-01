@@ -1,21 +1,23 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Cart, LineItem, Order } from '../models';
 import { CartStore } from '../cart.store';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { ProductService } from '../product.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-confirm-checkout',
   templateUrl: './confirm-checkout.component.html',
   styleUrl: './confirm-checkout.component.css'
 })
-export class ConfirmCheckoutComponent implements OnInit{
+export class ConfirmCheckoutComponent implements OnInit, OnDestroy{
 
   // TODO Task 3
   private fb = inject(FormBuilder);
   private cartStore = inject(CartStore)
   private productSvc = inject(ProductService)
+  private router = inject(Router)
 
   form!: FormGroup
   cartItems$!: Observable<LineItem[]>
@@ -23,18 +25,26 @@ export class ConfirmCheckoutComponent implements OnInit{
   cart: Cart = {
     lineItems: []
   }
+  cartSub$!:Subscription
+  checkoutSub$!: Subscription
 
   ngOnInit(): void {
     this.form = this.createForm()
     this.cartItems$ = this.cartStore.getAllItems
-    this.cartItems$.subscribe({
+    this.cartSub$ = this.cartItems$.subscribe({
       next: value => {
         value.forEach(i => {
           this.total+=i.price * i.quantity
+          console.info(i)
           this.cart.lineItems.push(i)
         })
       }
     })
+  }
+
+  ngOnDestroy(): void {
+    this.cartSub$.unsubscribe()
+    this.checkoutSub$.unsubscribe()
   }
 
   createForm(): FormGroup {
@@ -47,10 +57,29 @@ export class ConfirmCheckoutComponent implements OnInit{
   }
 
   submitOrder(){
-    var order = this.form.value as Order //missing cart for now
+    var order = this.form.value as Order
     order.cart = this.cart
     console.info(order)
-    this.productSvc.checkout(order)
+    this.checkoutSub$ = this.productSvc.checkout(order).subscribe({
+      next: (value) => {
+        alert(`orderId: ${value.orderId}`)
+        this.cartStore.clearCart
+        this.router.navigate(['/'])
+      },
+      error: (err) => {
+        alert(`error: ${err.message}`)
+      }
+      // complete: () => {
+      //   console.info("clear store")
+        
+      //   this.cartItems$ = this.cartStore.getAllItems
+      //   this.cartItems$.subscribe({
+      //     next: (value) => {
+      //       value.forEach(v => console.info(v))
+      //     }
+      //   })
+      // }
+    })
   }
 
 }
