@@ -63,7 +63,6 @@ export class ConfirmCheckoutComponent implements OnInit, OnDestroy{
   submitOrder(){
     var order = this.form.value as Order
     order.cart = this.cart
-    console.info(order)
     this.checkoutSub$ = this.productSvc.checkout(order).subscribe({
       next: (value) => {
         alert(`orderId: ${value.orderId}`)
