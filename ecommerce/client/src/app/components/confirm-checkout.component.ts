@@ -34,8 +34,10 @@ export class ConfirmCheckoutComponent implements OnInit, OnDestroy{
     this.cartSub$ = this.cartItems$.subscribe({
       next: value => {
         value.forEach(i => {
+          // calculate total price
           this.total+=i.price * i.quantity
           console.info(i)
+          // add line items into cart 
           this.cart.lineItems.push(i)
         })
       }
@@ -44,7 +46,9 @@ export class ConfirmCheckoutComponent implements OnInit, OnDestroy{
 
   ngOnDestroy(): void {
     this.cartSub$.unsubscribe()
-    this.checkoutSub$.unsubscribe()
+    if (this.checkoutSub$!=undefined){
+      this.checkoutSub$.unsubscribe()
+    }
   }
 
   createForm(): FormGroup {
@@ -63,6 +67,7 @@ export class ConfirmCheckoutComponent implements OnInit, OnDestroy{
     this.checkoutSub$ = this.productSvc.checkout(order).subscribe({
       next: (value) => {
         alert(`orderId: ${value.orderId}`)
+        // clear component store on successful checkout
         this.cartStore.clearCart()
         this.router.navigate(['/'])
       },

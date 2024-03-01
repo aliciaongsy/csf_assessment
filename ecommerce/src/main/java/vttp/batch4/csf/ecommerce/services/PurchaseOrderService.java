@@ -5,6 +5,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import vttp.batch4.csf.ecommerce.models.Order;
+import vttp.batch4.csf.ecommerce.repositories.LineItemException;
+import vttp.batch4.csf.ecommerce.repositories.OrderException;
 import vttp.batch4.csf.ecommerce.repositories.PurchaseOrderRepository;
 
 @Service
@@ -17,8 +19,8 @@ public class PurchaseOrderService {
   // If this method is changed, any assessment task relying on this method will
   // not be marked
   // You may only add Exception to the method's signature
-  @Transactional
-  public void createNewPurchaseOrder(Order order) throws Exception {
+  @Transactional(rollbackFor={OrderException.class, LineItemException.class})
+  public void createNewPurchaseOrder(Order order) throws OrderException, LineItemException  {
     // TODO Task 3
     poRepo.create(order);
   }

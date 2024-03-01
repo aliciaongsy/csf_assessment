@@ -29,18 +29,17 @@ public class PurchaseOrderRepository {
   // If this method is changed, any assessment task relying on this method will
   // not be marked
   // You may only add Exception to the method's signature
-  public void create(Order order) throws Exception {
+  public void create(Order order) throws OrderException, LineItemException {
     // TODO Task 3
     // add to shopping_cart table
     System.out.println("--adding into shopping_cart table--");
     int updateOrder = template.update(SQL_ADD_SHOPPING_ORDER, order.getOrderId(), order.getDate(), 
       order.getName(), order.getAddress(), order.getPriority(), order.getComments());
-    if (updateOrder==0){
-      System.out.println("error adding to table");
-      throw new Exception("Error: order not added");
+    
+      if (updateOrder==0){
+      throw new OrderException("Error: order not added");
     }
 
-    System.out.println("test");
     // loop through items and add each item to lineitem table
     int count = 0;
     List<LineItem> items = order.getCart().getLineItems();
@@ -50,10 +49,15 @@ public class PurchaseOrderRepository {
       int updateLineItem = template.update(SQL_ADD_LINE_ITEMS, item.getProductId(), item.getName(), 
         item.getQuantity(), item.getPrice(), order.getOrderId());
       count += updateLineItem;
+      
     }
+    if (count == items.size()){
+      throw new LineItemException("test");
+    }
+    
     if (count < items.size()){
       System.out.println("error adding to table");
-      throw new Exception("Error: not all items are added");
+      throw new LineItemException("Error: not all items are added");
     }
     
   }
